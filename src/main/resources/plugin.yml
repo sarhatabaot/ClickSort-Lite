@@ -1,0 +1,10 @@
+name: ClickSortLite
+description: "Sort inventories with middle click."
+main: cl.netgamer.clicksortlite.Main
+authors: [netgamer,sarhatabaot]
+api-version: 1.13
+version: ${project.version}
+permissions:
+  clicksortlite:
+    default: false
+    description: "Allows usage of sorting with middle mouse button"

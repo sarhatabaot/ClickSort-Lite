@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,9 +42,8 @@ public final class Main extends JavaPlugin implements Listener {
     private int getStorageSize(Inventory chest){
         if (chest.getType() == InventoryType.PLAYER) {
             return 27;
-        } else if (chest instanceof AbstractHorseInventory) {
+        } else if (chest instanceof AbstractHorseInventory && chest.getSize() - 2 < 1) {
             // enhances: v1 some performance improvements (break loops timely)
-            if ((chest.getSize() - 2) < 1)
                 return -1;
         }
         return chest.getSize();
@@ -144,13 +144,14 @@ public final class Main extends JavaPlugin implements Listener {
                 return diff;
 
             // then sort by durability
-            return item1.getDurability() - item2.getDurability();
+            return ((Damageable)item1.getItemMeta()).getDamage() - ((Damageable)item2.getItemMeta()).getDamage() ;
         });
 
         // the code below is because Inventory.setStorageContents() don't always works as described
 
         // use own inventory methods to fill item stacks (why reinvent the wheel?)
-        Inventory vaporChest = getServer().createInventory(null, (size += 8) - (size % 9));
+        size += 8;
+        Inventory vaporChest = getServer().createInventory(null, size - (size % 9));
         for (ItemStack item : storage)
             // enhances: v1 some performance improvements (break loops timely)
             if (isEmptyItem(item))
@@ -164,7 +165,8 @@ public final class Main extends JavaPlugin implements Listener {
 
         // done, send updated inventory views to player
         e.setCancelled(true);
-        player.updateInventory();
+
+        //player.updateInventory();
     }
 
 
